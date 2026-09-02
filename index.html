@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rae 的育兒清單</title>
+<meta name="description" content="Rae 預計 2026 年 11 月報到。這是一份可以認領的育兒清單，避免大家送到重複的東西。">
+<meta property="og:title" content="Rae 的育兒清單">
+<meta property="og:description" content="挑一項你想準備的，寫下名字就完成登記，重複的東西就不會撞在一起了。">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --ground:#F1EAE0;
+  --surface:#FCF8F2;
+  --surface-2:#F6EFE4;
+  --ink:#2E251B;
+  --muted:#877661;
+  --faint:#AC9C87;
+  --line:#E2D5C2;
+  --line-strong:#CFBCA3;
+  --accent:#2F6559;
+  --on-accent:#FBF7F1;
+  --accent-soft:#E1EDE7;
+  --accent-line:#B4D0C6;
+  --gold:#8E6E24;
+  --shadow:0 1px 2px rgba(46,37,27,.05), 0 8px 24px -16px rgba(46,37,27,.28);
+  --r:14px;
+  --font:'Microsoft JhengHei','微軟正黑體','PingFang TC','Noto Sans CJK TC','Heiti TC',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#1B1712;
+    --surface:#262019;
+    --surface-2:#2E271F;
+    --ink:#EFE6D8;
+    --muted:#B4A491;
+    --faint:#8A7B69;
+    --line:#3A3128;
+    --line-strong:#4C4134;
+    --accent:#85BEAD;
+    --on-accent:#132622;
+    --accent-soft:#20332E;
+    --accent-line:#3C5851;
+    --gold:#D3B36B;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 26px -18px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#1B1712;
+  --surface:#262019;
+  --surface-2:#2E271F;
+  --ink:#EFE6D8;
+  --muted:#B4A491;
+  --faint:#8A7B69;
+  --line:#3A3128;
+  --line-strong:#4C4134;
+  --accent:#85BEAD;
+  --on-accent:#132622;
+  --accent-soft:#20332E;
+  --accent-line:#3C5851;
+  --gold:#D3B36B;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 26px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--font);font-weight:700;text-wrap:balance;margin:0;}
+a{color:inherit;}
+button{font:inherit;color:inherit;cursor:pointer;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px;}
+
+.shell{max-width:720px;margin:0 auto;padding:0 20px 96px;}
+
+.masthead{padding:56px 0 0;}
+.eyebrow{
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);font-weight:700;margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line);}
+h1{font-size:clamp(34px,9vw,52px);line-height:1.12;letter-spacing:-.01em;}
+h1 .tail{display:block;font-size:.42em;line-height:1.6;letter-spacing:.01em;color:var(--muted);font-weight:400;margin-top:14px;font-family:var(--font);}
+.lede{max-width:34em;color:var(--muted);margin:22px 0 0;font-size:15px;}
+
+.facts{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden;margin-top:30px;
+}
+@media (max-width:560px){ .facts{grid-template-columns:1fr;} }
+.fact{background:var(--surface);padding:14px 16px;}
+.fact dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 2px;font-weight:500;}
+.fact dd{margin:0;font-size:15px;font-weight:500;}
+
+.progress{margin-top:26px;}
+.progress-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted);}
+.progress-top b{font-family:var(--font);font-size:26px;color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600;}
+.bar{height:7px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);margin-top:8px;overflow:hidden;}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:99px;width:0;transition:width .6s cubic-bezier(.2,.8,.3,1);}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;}
+.btn{
+  border:1px solid var(--line-strong);background:var(--surface);
+  border-radius:99px;padding:9px 18px;font-size:14px;font-weight:500;
+  transition:border-color .15s,background .15s,transform .1s;
+}
+.btn:hover{border-color:var(--accent);}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
+.btn-primary:hover{filter:brightness(1.08);border-color:var(--accent);}
+.btn-ghost{background:transparent;border-style:dashed;}
+.btn-sm{padding:6px 13px;font-size:13px;}
+
+.howto{
+  margin-top:40px;border:1px solid var(--accent-line);background:var(--accent-soft);
+  border-radius:var(--r);padding:20px 22px;
+}
+.howto h2{font-size:17px;margin-bottom:12px;}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:11px;counter-reset:s;}
+.steps li{display:flex;gap:12px;font-size:14px;line-height:1.6;}
+.steps li::before{
+  counter-increment:s;content:counter(s);
+  flex:0 0 auto;width:22px;height:22px;margin-top:3px;border-radius:50%;
+  background:var(--accent);color:var(--on-accent);
+  font-family:var(--font);font-size:12px;font-weight:600;
+  display:grid;place-items:center;
+}
+
+.tabs{
+  position:sticky;top:0;z-index:20;
+  margin:38px -20px 0;padding:12px 20px;
+  background:var(--ground);
+  border-bottom:1px solid var(--line);
+  display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  border:1px solid var(--line-strong);background:transparent;
+  border-radius:99px;padding:7px 15px;font-size:14px;white-space:nowrap;
+  color:var(--muted);transition:background .15s,color .15s,border-color .15s;
+}
+.tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground);font-weight:500;}
+.tab .n{font-variant-numeric:tabular-nums;opacity:.7;margin-left:5px;font-size:12px;}
+
+.panel[hidden]{display:none;}
+
+.cat{margin-top:38px;scroll-margin-top:76px;}
+.cat-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.cat-head h2{font-size:20px;letter-spacing:.01em;}
+.cat-head .rule{flex:1;height:1px;background:var(--line);}
+.cat-head .n{font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums;}
+
+.list{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:15px 16px;display:flex;gap:14px;align-items:flex-start;
+  box-shadow:var(--shadow);
+  transition:border-color .15s, opacity .35s, transform .35s;
+}
+.card:hover{border-color:var(--line-strong);}
+.card.leaving{opacity:0;transform:translateX(14px) scale(.98);}
+.card-main{flex:1 1 auto;min-width:0;}
+.name{font-size:16px;font-weight:500;line-height:1.45;}
+.note{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.6;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;align-items:center;}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;padding:3px 10px;border-radius:99px;
+  border:1px solid var(--line);color:var(--muted);background:var(--surface-2);
+  text-decoration:none;
+}
+.chip-link{border-color:var(--accent-line);color:var(--accent);background:transparent;}
+.chip-link:hover{background:var(--accent-soft);}
+.chip-many{border-color:transparent;background:var(--surface-2);color:var(--gold);font-weight:500;}
+.chip-from{border-style:dashed;}
+.card-side{flex:0 0 auto;}
+
+.card.claimed{background:var(--surface-2);}
+.claimers{display:grid;gap:7px;margin-top:11px;padding-top:11px;border-top:1px dashed var(--line-strong);}
+.claimer{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.55;flex-wrap:wrap;}
+.claimer .who{font-weight:500;white-space:nowrap;}
+.claimer .msg{color:var(--muted);min-width:0;}
+.claimer .tick{
+  flex:0 0 auto;width:17px;height:17px;border-radius:50%;background:var(--accent);
+  display:grid;place-items:center;margin-top:4px;
+}
+.claimer .tick::after{content:"";width:4px;height:8px;border:solid var(--on-accent);border-width:0 1.6px 1.6px 0;transform:rotate(42deg) translate(-1px,-1px);}
+.undo{background:none;border:none;color:var(--faint);font-size:12px;padding:0 2px;text-decoration:underline;text-underline-offset:3px;}
+.undo:hover{color:var(--ink);}
+
+.empty{
+  border:1px dashed var(--line-strong);border-radius:var(--r);
+  padding:36px 20px;text-align:center;color:var(--muted);font-size:14px;margin-top:30px;
+}
+.empty strong{display:block;font-family:var(--font);font-size:19px;color:var(--ink);margin-bottom:6px;font-weight:600;}
+
+.form{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:22px;margin-top:24px;display:grid;gap:15px;box-shadow:var(--shadow);
+}
+.field{display:grid;gap:6px;}
+.field label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:500;}
+.field input,.field textarea,.field select{
+  font:inherit;font-size:15px;color:var(--ink);
+  background:var(--ground);border:1px solid var(--line-strong);border-radius:9px;
+  padding:10px 12px;width:100%;
+}
+.field textarea{resize:vertical;min-height:72px;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);outline:none;}
+.field .hint{font-size:12.5px;color:var(--faint);line-height:1.55;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+
+dialog{
+  border:1px solid var(--line-strong);border-radius:18px;padding:0;
+  background:var(--surface);color:var(--ink);max-width:440px;width:calc(100% - 32px);
+  box-shadow:0 24px 60px -20px rgba(0,0,0,.4);
+}
+dialog::backdrop{background:rgba(30,23,16,.45);}
+.dlg-body{padding:26px;display:grid;gap:16px;}
+.dlg-body h2{font-size:21px;}
+.dlg-item{font-size:14px;color:var(--muted);margin:-8px 0 0;}
+.dlg-item b{color:var(--ink);font-weight:500;}
+.dlg-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+.seg{display:flex;gap:8px;flex-wrap:wrap;}
+.seg label{
+  border:1px solid var(--line-strong);border-radius:99px;padding:7px 14px;
+  font-size:13.5px;cursor:pointer;color:var(--muted);position:relative;
+}
+.seg input{position:absolute;opacity:0;width:0;height:0;}
+.seg label:has(input:checked){background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px;}
+
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);
+  background:var(--ink);color:var(--ground);
+  padding:12px 20px;border-radius:99px;font-size:14px;font-weight:500;
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity .28s,transform .28s;z-index:60;
+  max-width:calc(100% - 32px);text-align:center;
+}
+#toast.on{opacity:1;transform:translate(-50%,0);}
+.banner{
+  margin-top:22px;border-radius:10px;padding:11px 15px;font-size:13.5px;line-height:1.6;
+  border:1px solid var(--line-strong);background:var(--surface-2);color:var(--muted);
+}
+.banner b{color:var(--ink);}
+.banner[hidden]{display:none;}
+
+footer{
+  margin-top:64px;padding-top:24px;border-top:1px solid var(--line);
+  font-size:12.5px;color:var(--faint);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important;}
+}
+@media (max-width:520px){
+  .shell{padding:0 16px 90px;}
+  .masthead{padding-top:38px;}
+  .tabs{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;}
+  .card{padding:14px;}
+  .row2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <div class="eyebrow">Baby Registry · 2026</div>
+    <h1><span id="mTitle">Rae 的育兒清單</span><span class="tail" id="mTail">挑一項你想準備的，寫下名字，就不會跟別人送到重複的了。</span></h1>
+    <p class="lede" id="mLede">謝謝你想著我們。這裡列的東西沒有先後順序、也沒有價位期待，二手傳承我們更開心；真的不用勉強，能來看看寶寶就是最好的禮物。</p>
+
+    <dl class="facts" id="mFacts">
+      <div class="fact"><dt>寶寶暱稱</dt><dd id="mBaby">Rae</dd></div>
+      <div class="fact"><dt>預產期</dt><dd id="mDue">2026 年 11 月 2 日</dd></div>
+      <div class="fact"><dt>收件方式</dt><dd id="mShip">請私訊我們地址</dd></div>
+    </dl>
+
+    <div class="progress">
+      <div class="progress-top">
+        <span><b id="pDone">0</b> / <span id="pTotal">0</span> 項已經有人準備</span>
+        <span id="pMany"></span>
+      </div>
+      <div class="bar"><span id="pBar"></span></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btnShare" type="button">複製清單連結</button>
+      <button class="btn btn-ghost" id="btnGoAdd" type="button">我想送清單以外的</button>
+    </div>
+
+    <div class="banner" id="localBanner" hidden><b>本機預覽模式：</b>認領紀錄目前只存在你這台裝置，其他人看不到。要正式開放給親友，請照「設定說明」把 API_URL 接上 Google 試算表。</div>
+    <div class="banner" id="errBanner" hidden></div>
+  </header>
+
+  <section class="howto" id="mHowto">
+    <h2 id="mHowtoTitle">怎麼用這份清單？</h2>
+    <ol class="steps" id="mSteps">
+      <li>看看「還可以準備」裡有沒有你想送的東西，每一項都有參考連結可以點進去看。</li>
+      <li>按「我來準備」，留下名字（想低調寫暱稱也可以），這項就會移到「已經有人準備」，別人就不會再送重複的。</li>
+      <li>東西不用急著寄，見面時帶來或私訊我們約時間都可以。清單以外想送的，歡迎自己新增。</li>
+    </ol>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="清單分頁">
+    <button class="tab" role="tab" id="tab-open" aria-controls="panel-open" aria-selected="true">還可以準備<span class="n" id="nOpen"></span></button>
+    <button class="tab" role="tab" id="tab-done" aria-controls="panel-done" aria-selected="false">已經有人準備<span class="n" id="nDone"></span></button>
+    <button class="tab" role="tab" id="tab-add" aria-controls="panel-add" aria-selected="false">新增項目</button>
+  </nav>
+
+  <div class="panel" id="panel-open" role="tabpanel" aria-labelledby="tab-open"></div>
+  <div class="panel" id="panel-done" role="tabpanel" aria-labelledby="tab-done" hidden></div>
+
+  <div class="panel" id="panel-add" role="tabpanel" aria-labelledby="tab-add" hidden>
+    <section class="cat">
+      <div class="cat-head"><h2>想到清單上沒有的？</h2><div class="rule"></div></div>
+      <p class="lede" style="margin-top:0">歡迎經驗豐富的爸媽，如果有好用的東西想推薦，也可以幫我們加進來。新增後它會出現在「還可以準備」，您也可以順手認領自己這一項喔。</p>
+      <form class="form" id="addForm">
+        <div class="field">
+          <label for="aName">品項</label>
+          <input id="aName" required maxlength="40" placeholder="例如：防脹氣奶瓶">
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="aCat">分類</label>
+            <select id="aCat"></select>
+          </div>
+          <div class="field">
+            <label for="aWant">數量</label>
+            <input id="aWant" type="number" inputmode="numeric" min="0" max="20" step="1" value="1">
+            <span class="hint">想要幾個就填幾個。填 0 表示多多益善，很多人都可以認領同一項。</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="aUrl">參考連結（選填）</label>
+          <input id="aUrl" type="url" inputmode="url" placeholder="https://...">
+          <span class="hint">貼上商品頁網址，其他人就知道你說的是哪一款。留白的話會自動附上搜尋連結。</span>
+        </div>
+        <div class="field">
+          <label for="aNote">備註（選填）</label>
+          <input id="aNote" maxlength="60" placeholder="例如：這款好清洗，我自己用了兩年">
+        </div>
+        <div class="field">
+          <label for="aBy">我的名字</label>
+          <input id="aBy" required maxlength="20" placeholder="讓我們知道是誰推薦的">
+        </div>
+        <div class="dlg-actions" style="justify-content:flex-start">
+          <button class="btn btn-primary" type="submit">加入清單</button>
+        </div>
+      </form>
+    </section>
+    <div id="guestList"></div>
+  </div>
+
+  <footer>
+    <span>最後更新 <span id="updated">—</span></span>
+    <span id="hostTools"></span>
+  </footer>
+</div>
+
+<dialog id="claimDlg">
+  <form class="dlg-body" id="claimForm">
+    <h2>謝謝你！</h2>
+    <p class="dlg-item">我想準備的是 <b id="dlgItem"></b></p>
+    <div class="field">
+      <label for="cName">我的名字</label>
+      <input id="cName" required maxlength="20" placeholder="讓我們知道要感謝誰">
+    </div>
+    <div class="field">
+      <label>狀態</label>
+      <div class="seg">
+        <label><input type="radio" name="kind" value="我要購買" checked>我要購買</label>
+        <label><input type="radio" name="kind" value="二手傳承">二手傳承</label>
+      </div>
+    </div>
+    <div class="field">
+      <label for="cMsg">想說的話（選填）</label>
+      <input id="cMsg" maxlength="60" placeholder="給寶寶或爸媽的一句話">
+    </div>
+    <div class="dlg-actions">
+      <button class="btn" type="button" id="dlgCancel">取消</button>
+      <button class="btn btn-primary" type="submit">完成登記</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="registry-core.js"></script>
+<script>
+
+/* 本檔的清單內容、連線設定都在 registry-core.js，用 admin.html 後台編輯 */
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const isHost = new URLSearchParams(location.search).get("host") === "1";
+
+let state = null;          // { meta: {...}, items: [...], updated: iso }
+let pendingItemId = null;
+let busy = false;
+
+async function load() {
+  state = await loadState();
+  render();
+}
+
+
+/* ---------- 小工具 ---------- */
+function myClaims() {
+  try { return JSON.parse(lsGet("rae-my-claims") || "[]"); } catch (e) { return []; }
+}
+function rememberClaim(cid) {
+  const a = myClaims(); a.push(cid);
+  lsSet("rae-my-claims", JSON.stringify(a));
+}
+function forgetClaim(cid) {
+  lsSet("rae-my-claims", JSON.stringify(myClaims().filter(x => x !== cid)));
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("on"), 3200);
+}
+function showError(msg) {
+  const b = $("#errBanner");
+  b.innerHTML = "<b>沒有存成功：</b>" + esc(msg) + " 請重新整理再試一次。";
+  b.hidden = false;
+}
+
+const visible = () => (state ? state.items.filter(i => !i.hidden) : []);
+
+/* ---------- 畫面 ---------- */
+function itemCard(it, mode) {
+  const claims = it.claims || [];
+  const url = it.url || searchUrl(it.n);
+  const chips = [];
+  if (it.want === 0) chips.push('<span class="chip chip-many">多多益善</span>');
+  else if (it.want > 1) chips.push('<span class="chip">想要 ' + it.want + ' 個</span>');
+  if (it.by) chips.push('<span class="chip chip-from">' + esc(it.by) + ' 推薦</span>');
+  chips.push('<a class="chip chip-link" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + (it.url ? "參考連結" : "找找看") + " ↗</a>");
+
+  /* 認領者姓名只有後台（?host=1）看得到。一般訪客看到的是匿名的
+     「已經有 N 位朋友準備了」，但自己認領的那一筆會顯示，才能自行取消。 */
+  function claimerRow(c, anonymous) {
+    return '<div class="claimer"><span class="tick"></span>' +
+      '<span class="who">' + (anonymous ? "已經有人準備了" : esc(c.name)) + "</span>" +
+      (!anonymous && c.kind ? '<span class="msg">· ' + esc(c.kind) + "</span>" : "") +
+      (!anonymous && c.msg ? '<span class="msg">「' + esc(c.msg) + "」</span>" : "") +
+      (anonymous ? "" : ' <button class="undo" data-undo="' + it.id + '" data-cid="' + c.cid + '">取消</button>') +
+      "</div>";
+  }
+
+  let claimersHtml = "";
+  if (claims.length) {
+    let rows;
+    if (isHost) {
+      rows = claims.map(c => claimerRow(c, false));
+    } else {
+      const mine = myClaims();
+      rows = claims.filter(c => mine.includes(c.cid)).map(c => claimerRow(c, false));
+      const others = claims.filter(c => !mine.includes(c.cid)).length;
+      if (others) {
+        rows.push('<div class="claimer"><span class="tick"></span><span class="who">' +
+          (others > 1 ? "已經有 " + others + " 位朋友準備了" : "已經有朋友準備了") + "</span></div>");
+      }
+    }
+    claimersHtml = '<div class="claimers">' + rows.join("") + "</div>";
+  }
+
+  const canClaim = !isFull(it);
+  const side = canClaim
+    ? '<div class="card-side"><button class="btn btn-sm btn-primary" data-claim="' + it.id + '">我來準備</button></div>'
+    : "";
+  const del = isHost ? '<div class="card-side"><button class="btn btn-sm" data-del="' + it.id + '">刪除</button></div>' : "";
+
+  return '<li class="card' + (mode === "done" ? " claimed" : "") + '" data-card="' + it.id + '">' +
+    '<div class="card-main"><div class="name">' + esc(it.n) + "</div>" +
+    (it.note ? '<div class="note">' + esc(it.note) + "</div>" : "") +
+    '<div class="chips">' + chips.join("") + "</div>" +
+    claimersHtml +
+    "</div>" + side + del + "</li>";
+}
+
+function renderList(target, items, mode, emptyHtml) {
+  if (!items.length) { target.innerHTML = emptyHtml; return; }
+  const byCat = new Map();
+  orderedCategories(state).forEach(c => byCat.set(c, []));
+  items.forEach(i => {
+    if (!byCat.has(i.c)) byCat.set(i.c, []);
+    byCat.get(i.c).push(i);
+  });
+  let html = "";
+  byCat.forEach((list, cat) => {
+    if (!list.length) return;
+    html += '<section class="cat"><div class="cat-head"><h2>' + esc(cat) + '</h2><div class="rule"></div><span class="n">' + list.length + " 項</span></div>" +
+      '<ul class="list">' + list.map(i => itemCard(i, mode)).join("") + "</ul></section>";
+  });
+  target.innerHTML = html;
+}
+
+function renderMeta() {
+  const m = state.meta;
+  document.title = m.title;
+  $("#mTitle").textContent = m.title;
+  $("#mTail").textContent = m.tail;
+  $("#mLede").textContent = m.lede;
+  $("#mLede").hidden = !m.lede.trim();
+  $("#mBaby").textContent = m.baby;
+  $("#mDue").textContent = m.due;
+  $("#mShip").textContent = m.ship;
+  $("#mHowtoTitle").textContent = m.howtoTitle;
+  const steps = (m.steps || []).filter(s => s.trim());
+  $("#mSteps").innerHTML = steps.map(s => "<li>" + esc(s) + "</li>").join("");
+  $("#mHowto").hidden = !steps.length;
+}
+
+function render() {
+  renderMeta();
+  const all = visible();
+  const open = all.filter(i => !isFull(i));
+  const done = all.filter(i => isFull(i));
+
+  renderList($("#panel-open"), open, "open",
+    '<div class="empty"><strong>清單被大家包辦完了</strong>真的太感謝了，如果還想送點什麼，可以到「新增項目」自己加一項。</div>');
+  renderList($("#panel-done"), done, "done",
+    '<div class="empty"><strong>還沒有人登記</strong>當有人按下「我來準備」，那一項就會搬到這裡，並顯示準備的人是誰。</div>');
+
+  const guests = all.filter(i => i.by);
+  $("#guestList").innerHTML = guests.length
+    ? '<section class="cat"><div class="cat-head"><h2>大家加碼的項目</h2><div class="rule"></div><span class="n">' + guests.length + ' 項</span></div><ul class="list">' + guests.map(i => itemCard(i, isFull(i) ? "done" : "open")).join("") + "</ul></section>"
+    : "";
+
+  const countable = all.filter(i => i.want > 0);
+  const doneCount = countable.filter(isFull).length;
+  const many = all.filter(i => i.want === 0).length;
+  $("#pDone").textContent = doneCount;
+  $("#pTotal").textContent = countable.length;
+  $("#pBar").style.width = (countable.length ? (doneCount / countable.length * 100) : 0) + "%";
+  $("#pMany").textContent = many ? "另有 " + many + " 項多多益善" : "";
+  $("#nOpen").textContent = open.length;
+  $("#nDone").textContent = done.length;
+  $("#updated").textContent = state && state.updated
+    ? new Date(state.updated).toLocaleDateString("zh-TW", { year: "numeric", month: "long", day: "numeric" })
+    : "—";
+
+  const sel = $("#aCat");
+  const cats = orderedCategories(state);
+  const keep = sel.value;
+  sel.innerHTML = cats.map(c => '<option value="' + esc(c) + '">' + esc(c) + "</option>").join("");
+  sel.value = cats.indexOf(keep) >= 0 ? keep
+    : (cats.indexOf("大家加碼的") >= 0 ? "大家加碼的" : cats[cats.length - 1] || "");
+
+  if (isHost && !$("#hostTools").firstChild) {
+    $("#hostTools").innerHTML = '<a href="admin.html" style="color:var(--accent)">開啟後台編輯 →</a>';
+  }
+}
+
+/* ---------- 互動 ---------- */
+function switchTab(id) {
+  $$(".tab").forEach(t => {
+    const on = t.id === "tab-" + id;
+    t.setAttribute("aria-selected", on ? "true" : "false");
+    $("#panel-" + t.id.slice(4)).hidden = !on;
+  });
+}
+$$(".tab").forEach(t => t.addEventListener("click", () => switchTab(t.id.slice(4))));
+
+$("#btnGoAdd").addEventListener("click", () => {
+  switchTab("add");
+  $("#panel-add").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+$("#btnShare").addEventListener("click", async () => {
+  const url = location.href.split("?")[0];
+  try {
+    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      await navigator.share({ title: "Rae 的育兒清單", url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast("連結已複製，可以貼到 LINE 了");
+    }
+  } catch (e) {
+    toast("複製失敗，請直接複製網址列");
+  }
+});
+
+document.addEventListener("click", e => {
+  const claim = e.target.closest("[data-claim]");
+  if (claim) return openClaim(claim.dataset.claim);
+
+  const undo = e.target.closest("[data-undo]");
+  if (undo) return doUnclaim(undo.dataset.undo, undo.dataset.cid);
+
+  const del = e.target.closest("[data-del]");
+  if (del) return doRemove(del.dataset.del);
+});
+
+function openClaim(id) {
+  const it = visible().find(i => i.id === id);
+  if (!it) return;
+  pendingItemId = id;
+  $("#dlgItem").textContent = it.n;
+  $("#cName").value = lsGet("rae-my-name") || "";
+  $("#cMsg").value = "";
+  $("#claimDlg").showModal();
+  setTimeout(() => ($("#cName").value ? $("#cMsg") : $("#cName")).focus(), 60);
+}
+
+$("#dlgCancel").addEventListener("click", () => $("#claimDlg").close());
+
+$("#claimForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (busy) return;
+  const name = $("#cName").value.trim();
+  if (!name) return;
+  const kind = ($('input[name="kind"]:checked') || {}).value || "";
+  const msg = $("#cMsg").value.trim();
+  const cid = uid();
+  const id = pendingItemId;
+  busy = true;
+  try {
+    state = await api({ op: "claim", id, cid, name, msg, kind });
+    lsSet("rae-my-name", name);
+    rememberClaim(cid);
+    $("#claimDlg").close();
+    const card = $('[data-card="' + id + '"]');
+    const it = state.items.find(i => i.id === id);
+    if (card && it && isFull(it)) {
+      card.classList.add("leaving");
+      setTimeout(render, 340);
+    } else {
+      render();
+    }
+    toast("登記完成，謝謝你，" + name + "！");
+  } catch (err) {
+    $("#claimDlg").close();
+    showError(err.message);
+    load().catch(() => {});
+  } finally {
+    busy = false;
+  }
+});
+
+async function doUnclaim(id, cid) {
+  const it = visible().find(i => i.id === id);
+  const c = it && (it.claims || []).find(x => x.cid === cid);
+  if (!c) return;
+  if (!confirm("要取消「" + c.name + "」認領的「" + it.n + "」嗎？取消後這一項會回到清單上。")) return;
+  try {
+    state = await api({ op: "unclaim", id, cid });
+    forgetClaim(cid);
+    render();
+    toast("已取消認領");
+  } catch (err) { showError(err.message); }
+}
+
+async function doRemove(id) {
+  const it = visible().find(i => i.id === id);
+  if (!it) return;
+  if (!confirm("確定要從清單移除「" + it.n + "」嗎？")) return;
+  try {
+    state = await api({ op: "remove", id });
+    render();
+    toast("已移除");
+  } catch (err) { showError(err.message); }
+}
+
+/** 數量欄位是自由填寫的：留白當作 1，0 代表多多益善 */
+function wantValue() {
+  const raw = $("#aWant").value.trim();
+  if (raw === "") return 1;
+  const n = parseInt(raw, 10);
+  if (isNaN(n) || n < 0) return 1;
+  return Math.min(20, n);
+}
+
+$("#addForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const n = $("#aName").value.trim();
+  const by = $("#aBy").value.trim();
+  if (!n || !by) return;
+  const item = {
+    id: "g" + uid(),
+    c: $("#aCat").value || "大家加碼的",
+    n,
+    note: $("#aNote").value.trim(),
+    url: $("#aUrl").value.trim(),
+    want: wantValue(),
+    by,
+    claims: [],
+    hidden: false
+  };
+  try {
+    state = await api({ op: "add", item });
+    lsSet("rae-my-name", by);
+    e.target.reset();
+    $("#aBy").value = by;
+    render();
+    toast("已加入清單，謝謝你的推薦！");
+    switchTab("open");
+    setTimeout(() => {
+      const card = $('[data-card="' + item.id + '"]');
+      if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+  } catch (err) { showError(err.message); }
+});
+
+/* ---------- 啟動 ---------- */
+$("#localBanner").hidden = !!API_URL;
+load().catch(err => {
+  showError(err.message);
+  $("#panel-open").innerHTML = '<div class="empty"><strong>清單讀取失敗</strong>請重新整理頁面試試看。</div>';
+});
+
+// 有連後端時，回到分頁就同步一次最新狀態
+if (API_URL) {
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) load().catch(() => {});
+  });
+  setInterval(() => { if (!document.hidden) load().catch(() => {}); }, 45000);
+}
+</script>
+</body>
+</html>
