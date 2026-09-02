@@ -988,6 +988,245 @@ $("#addForm").addEventListener("submit", async e => {
   } catch (err) { showError(err.message); }
 });
 
+/* ==========================================================
+   開啟即顯示用的內容快照
+   ----------------------------------------------------------
+   這是清單在 2026/09/02 的樣子，寫死在檔案裡，所以頁面一打開
+   就能立刻畫出來，不用等 Google 回應。畫完之後程式會在背景跟
+   試算表對一次，有變動才會默默更新。
+   在後台改了項目之後想更新這份快照，跟我說一聲就好；
+   不更新也沒關係，只是第一次來的訪客會先看到舊的一兩秒。
+   ========================================================== */
+const SNAPSHOT = {
+  "meta": {
+    "title": "Eva & James 寶寶願望清單",
+    "tail": "挑選一項您想準備的，寫下名字 ( 想保密也OK )  ",
+    "lede": "這裡列的東西沒有先後順序、也沒有價位期待，二手傳承也很棒；\n我們由衷感謝大家的祝福，也歡迎來拜訪！",
+    "baby": "Rae",
+    "due": "2026 年 11 月 2 日",
+    "ship": "請私訊我們喔",
+    "howtoTitle": "怎麼用這份清單？",
+    "openCap": 3,
+    "steps": [
+      "看看「還可以準備」裡有沒有你想送的東西，每一項都有參考連結可以點進去看。",
+      "按「我來準備」，留下名字（想保密或低調寫暱稱也可以），這項就會移到「已經有人準備」，別人就不會再送重複的。",
+      "東西都可以直接寄送，想要見面時帶來/私訊我們約時間也沒問題。如果有清單以外想準備的，也歡迎自己新增喔！"
+    ],
+    "categories": [
+      "餵食",
+      "尿布與清潔",
+      "洗澡與日常照護",
+      "睡眠",
+      "衣物",
+      "安全防護",
+      "二手傳承",
+      "外出用品",
+      "健康照護",
+      "給爸媽的"
+    ]
+  },
+  "items": [
+    {
+      "id": "s0",
+      "c": "餵食",
+      "n": "圍兜 / 口水巾",
+      "note": "",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s1",
+      "c": "餵食",
+      "n": "兒童餐椅 / 餐搖椅",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s2",
+      "c": "餵食",
+      "n": "Yep2 自動泡奶機",
+      "note": "半夜泡奶救星",
+      "url": "https://www.yep2story.com/pages/automaticmilkmachine?srsltid=AfmBOop5xAPmUQAlDuhwzrFRpPHPWib_PsdsSONGmGXl07b_zhRLYqe9",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s5",
+      "c": "尿布與清潔",
+      "n": "紙尿布",
+      "note": "新生兒 NB 號",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s6",
+      "c": "尿布與清潔",
+      "n": "純水濕紙巾",
+      "note": "",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s7",
+      "c": "尿布與清潔",
+      "n": "尿布桶",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s8",
+      "c": "尿布與清潔",
+      "n": "尿布台",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s9",
+      "c": "尿布與清潔",
+      "n": "乳液 / 護臀膏",
+      "note": "",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s10",
+      "c": "洗澡與日常照護",
+      "n": "嬰兒澡盆",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s11",
+      "c": "洗澡與日常照護",
+      "n": "沐浴用品",
+      "note": "無香料、低敏配方為佳",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s13",
+      "c": "睡眠",
+      "n": "防水保潔墊",
+      "note": "",
+      "url": "",
+      "want": 2,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s14",
+      "c": "睡眠",
+      "n": "白噪音機",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s17",
+      "c": "衣物",
+      "n": "帽子 / 襪子 / 手套",
+      "note": "其他二手品也很歡迎",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s18",
+      "c": "衣物",
+      "n": "寶寶內衣（厚）/ 紗布衣",
+      "note": "",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s19",
+      "c": "衣物",
+      "n": "紗布巾",
+      "note": "",
+      "url": "",
+      "want": 0,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s31",
+      "c": "安全防護",
+      "n": "嬰兒監視器",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "s32",
+      "c": "安全防護",
+      "n": "嬰兒地墊 / 圍欄",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    },
+    {
+      "id": "a19ys8b70g0w",
+      "c": "睡眠",
+      "n": "哺乳小夜燈",
+      "note": "",
+      "url": "",
+      "want": 1,
+      "by": "",
+      "hidden": false,
+      "claims": []
+    }
+  ]
+};
+
 /* ---------- 啟動 ---------- */
 $("#localBanner").hidden = !!API_URL;
 
@@ -996,37 +1235,35 @@ $("#localBanner").hidden = !!API_URL;
 const readCache = () => { try { return typeof cachedState === "function" ? cachedState() : null; } catch (e) { return null; } };
 const writeCache = s => { try { if (typeof cacheState === "function") cacheState(s); } catch (e) {} };
 
-let listPlaceholder = true;
-function showListLoading() {
-  if (!listPlaceholder) return;
-  $("#panel-open").innerHTML =
-    '<div class="empty"><strong>清單載入中⋯</strong>正在跟 Google 試算表對最新的認領狀況，稍等一下。</div>';
+function firstState() {
+  const cached = readCache();                       // 這台裝置上次看到的內容最準
+  if (cached && cached.items && cached.items.length) return cached;
+  try {                                             // 沒有的話用檔案裡的快照，一樣是立刻顯示
+    const raw = JSON.parse(JSON.stringify(SNAPSHOT));
+    return typeof normalize === "function" ? normalize(raw) : raw;
+  } catch (e) { return null; }
 }
+
 function showListError(msg) {
   $("#panel-open").innerHTML =
     '<div class="empty"><strong>清單讀取失敗</strong>' + esc(msg || "") +
     '<div style="margin-top:14px"><button class="btn btn-primary" id="btnRetry" type="button">再試一次</button></div></div>';
   const r = $("#btnRetry");
-  if (r) r.addEventListener("click", () => { showListLoading(); boot(); });
+  if (r) r.addEventListener("click", () => boot());
 }
 
 async function boot() {
-  const cached = readCache();
-  if (cached) {                       // 有上次的內容就先畫，畫面立刻是對的
-    state = cached;
-    listPlaceholder = false;
-    render();
-  } else {
-    showListLoading();                // 只有清單區域顯示載入中，頁首照常顯示
+  if (!state) {                       // 開頁的第一件事：立刻把清單畫出來
+    const s0 = firstState();
+    if (s0) { state = s0; render(); }
   }
-  try {
+  try {                               // 然後在背景跟試算表對一次
     state = await loadState();
     writeCache(state);
-    listPlaceholder = false;
     render();
   } catch (err) {
     if (!state) showListError(err.message);
-    else showError(err.message);      // 已經有內容可看，就只在上方提示
+    else showError(err.message);      // 已經有清單可看，就只在上方提示一句
   }
 }
 
