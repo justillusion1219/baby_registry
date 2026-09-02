@@ -239,7 +239,7 @@ iframe.phone{width:390px;max-width:100%;flex:0 0 auto;transform:none !important;
     <!-- ---------- 清單項目 ---------- -->
     <section class="panel" id="p-items" role="tabpanel">
       <h2 class="sec">清單項目</h2>
-      <p class="help">改完欄位點一下別的地方就會自動存檔，右邊預覽會跟著更新。「數量」想要幾個就填幾個，填 0 表示多多益善，很多人都可以認領同一項（適合尿布、濕紙巾這種消耗品）。</p>
+      <p class="help">改完欄位點一下別的地方就會自動存檔，右邊預覽會跟著更新。「數量」是這一項<b>最多幾個人可以認領</b>，認領滿了就會移到「已經有人準備」。消耗品填 0 表示不特別設限，會套用下面「設定」分頁的預設上限。前台不會顯示這些數字。</p>
       <div id="catList"></div>
       <div class="rowbtns">
         <button class="btn" id="btnAddCat" type="button">+ 新增分類</button>
@@ -284,6 +284,12 @@ iframe.phone{width:390px;max-width:100%;flex:0 0 auto;transform:none !important;
         <label for="fHowto">使用說明標題</label>
         <input id="fHowto" data-meta="howtoTitle" maxlength="30">
       </div>
+      <div class="field" style="max-width:320px">
+        <label for="fCap">未設上限時的份數</label>
+        <input id="fCap" data-meta="openCap" type="number" inputmode="numeric" min="1" max="50" step="1">
+        <span class="hint">數量填 0 的項目（尿布、濕紙巾這類消耗品）幾個人認領之後算完成。前台看不到這個數字，只有你知道。</span>
+      </div>
+
       <div class="field">
         <label>使用說明步驟</label>
         <div id="stepList"></div>
@@ -360,7 +366,7 @@ iframe.phone{width:390px;max-width:100%;flex:0 0 auto;transform:none !important;
 
 <button id="previewToggle" type="button">預覽前台</button>
 
-<script src="registry-core.js"></script>
+<script src="registry-core.js?v=4"></script>
 <script>
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -450,11 +456,11 @@ function itemRow(it, idx, total, cats) {
   const claims = (it.claims || []).length;
   let badge = "";
   if (claims) {
-    badge = isFull(it)
+    badge = isFull(it, state)
       ? '<span class="badge">' + claims + ' 人已認領</span>'
-      : '<span class="badge part">' + claims + " / " + (it.want || "∞") + " 人認領</span>";
+      : '<span class="badge part">' + claims + " / " + capOf(it, state) + " 人認領</span>";
   }
-  return '<div class="irow' + (isFull(it) ? " done" : "") + '" data-id="' + it.id + '">' +
+  return '<div class="irow' + (isFull(it, state) ? " done" : "") + '" data-id="' + it.id + '">' +
     '<input class="i-name" data-f="n" value="' + esc(it.n) + '" maxlength="40" aria-label="品項名稱">' +
     '<div class="isub">' +
       '<input data-f="note" value="' + esc(it.note || "") + '" maxlength="60" placeholder="備註（尺寸、偏好…）">' +
@@ -463,7 +469,7 @@ function itemRow(it, idx, total, cats) {
     '<div class="imeta">' +
       '<select data-f="c" aria-label="分類">' + cats.map(c => '<option value="' + esc(c) + '"' + (c === it.c ? " selected" : "") + ">" + esc(c) + "</option>").join("") + "</select>" +
       '<input class="i-want" data-f="want" type="number" inputmode="numeric" min="0" max="20" step="1" value="' + (it.want || 0) + '" aria-label="數量（0 = 多多益善）" title="想要幾個就填幾個，0 = 多多益善">' +
-      '<span class="unit">' + (it.want === 0 ? "多多益善" : "個") + "</span>" +
+      '<span class="unit">' + (it.want === 0 ? "不限（用預設 " + capOf(it, state) + "）" : "個") + "</span>" +
       badge +
       (it.by ? '<span class="badge part">' + esc(it.by) + " 推薦</span>" : "") +
       '<span class="iact">' +
@@ -631,7 +637,8 @@ let metaTimer = null;
 async function saveMeta(key, value) {
   clearTimeout(metaTimer);
   const meta = {};
-  meta[key] = value;
+  meta[key] = key === "openCap" ? Math.max(1, Math.min(50, parseInt(value, 10) || 3)) : value;
+  value = meta[key];
   state.meta[key] = value;
   dirty = false;
   await send({ op: "meta", meta });
