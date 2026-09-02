@@ -241,28 +241,39 @@ async function api(op) {
     return localStore.write(JSON.parse(JSON.stringify(s)));
   }
 
-  /* 一定要有逾時。沒有的話，只要 Google 那邊沒回應，
-     頁面就會無止盡地等下去，使用者只看到轉圈圈。 */
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 20000);
-  let res;
-  try {
-    res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(op),  // 純字串 body：避免觸發 CORS preflight
-      signal: ctrl.signal
-    });
-  } catch (e) {
-    throw new Error(e && e.name === "AbortError"
-      ? "連線逾時，Google 那邊沒有回應"
-      : "連不上伺服器，請檢查網路");
-  } finally {
-    clearTimeout(timer);
+  /* 逾時保護，避免 Google 沒回應時無止盡地等。
+     Apps Script 冷啟動常常要十幾秒，所以給到 45 秒；
+     讀取失敗還會自動重試一次，因為第二次通常已經熱起來了。 */
+  const TIMEOUT = 45000;
+  const attempts = op.op === "get" ? 2 : 1;   // 只有唯讀的 get 適合重試
+  let lastErr;
+  for (let n = 0; n < attempts; n++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT);
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(op),  // 純字串 body：避免觸發 CORS preflight
+        signal: ctrl.signal
+      });
+      clearTimeout(timer);
+      if (!res.ok) throw new Error("連線失敗（HTTP " + res.status + "）");
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      return normalize(data);
+    } catch (e) {
+      clearTimeout(timer);
+      if (e && e.name === "AbortError") {
+        lastErr = new Error("連線逾時，Google 那邊太久沒有回應");
+      } else if (e instanceof TypeError) {          // fetch 失敗都是 TypeError
+        lastErr = new Error("連不上伺服器，請檢查網路連線");
+      } else {
+        lastErr = e;                                 // 伺服器自己回的訊息就照原樣顯示
+      }
+      if (n < attempts - 1) await new Promise(r => setTimeout(r, 1500));
+    }
   }
-  if (!res.ok) throw new Error("連線失敗（HTTP " + res.status + "）");
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  return normalize(data);
+  throw lastErr;
 }
 
 /* ----------------------------------------------------------

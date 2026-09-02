@@ -880,17 +880,27 @@ function renderAll() {
   $("#modePill").textContent = API_URL ? "已連線" : "本機模式";
 }
 
-(async function init() {
+async function init() {
+  setSave("讀取中⋯", "saving");
+  $("#catList").innerHTML =
+    '<div class="empty">正在跟 Google 試算表要資料⋯<br>' +
+    '<span style="font-size:13px">第一次開啟或久沒使用時，Google 那邊要花十幾秒醒過來，請稍等。</span></div>';
   try {
     state = await loadState();
     renderAll();
     setSave("目前是最新的", "live");
     if (matchMedia("(min-width:1060px)").matches) openPreview(true);
   } catch (e) {
-    setSave("讀取失敗：" + e.message, "bad");
-    $("#catList").innerHTML = '<div class="empty">讀不到清單資料，請重新整理試試看。</div>';
+    setSave("讀取失敗", "bad");
+    $("#catList").innerHTML =
+      '<div class="empty"><b>讀不到清單資料</b><br>' + e.message +
+      '<div style="margin-top:14px"><button class="btn btn-primary" id="btnInitRetry" type="button">再試一次</button></div></div>';
+    const r = $("#btnInitRetry");
+    if (r) r.addEventListener("click", init);
   }
-})();
+}
+
+init();
 </script>
 </body>
 </html>
