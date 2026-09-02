@@ -26,6 +26,7 @@ const DEFAULT_META = {
   due: "2026 年 11 月 2 日",
   ship: "請私訊我們地址",
   howtoTitle: "怎麼用這份清單？",
+  openCap: 3,          // 數量填 0（不限份數）的項目，幾個人認領後就算完成
   steps: [
     "看看「還可以準備」裡有沒有你想送的東西，每一項都有參考連結可以點進去看。",
     "按「我來準備」，留下名字（想低調寫暱稱也可以），這項就會移到「已經有人準備」，別人就不會再送重複的。",
@@ -90,7 +91,16 @@ function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const searchUrl = n => "https://www.google.com/search?tbm=shop&q=" + encodeURIComponent(n + " 嬰兒");
 const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
-const isFull = i => i.want > 0 && (i.claims || []).length >= i.want;
+/** 這一項是不是已經滿了。want 就是上限；want 為 0 表示沒設，
+    改用後台的「未設上限時的份數」(meta.openCap) 當上限。 */
+function capOf(i, state) {
+  if (i.want > 0) return i.want;
+  const c = state && state.meta ? Number(state.meta.openCap) : 0;
+  return c > 0 ? c : 3;
+}
+function isFull(i, state) {
+  return (i.claims || []).length >= capOf(i, state);
+}
 const safeUrl = u => /^https?:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
 
 function seedState() {
@@ -112,6 +122,8 @@ function normalize(s) {
   if (!Array.isArray(s.items)) s.items = [];
   s.meta = Object.assign({}, DEFAULT_META, s.meta || {});
   if (!Array.isArray(s.meta.steps)) s.meta.steps = DEFAULT_META.steps.slice();
+  const cap = Number(s.meta.openCap);
+  s.meta.openCap = cap > 0 ? Math.min(50, Math.floor(cap)) : DEFAULT_META.openCap;
   if (!Array.isArray(s.meta.categories) || !s.meta.categories.length) {
     const seen = [];
     s.items.forEach(i => { if (i.c && seen.indexOf(i.c) < 0) seen.push(i.c); });
@@ -142,7 +154,7 @@ function reduce(s, op) {
     const it = find(op.id);
     if (!it) throw new Error("找不到這個項目");
     it.claims = it.claims || [];
-    if (it.want > 0 && it.claims.length >= it.want) throw new Error("這一項剛剛被別人認領了");
+    if (it.claims.length >= capOf(it, s)) throw new Error("這一項剛剛被別人認領了");
     it.claims.push({ cid: op.cid, name: op.name, msg: op.msg || "", kind: op.kind || "", at: new Date().toISOString() });
 
   } else if (op.op === "unclaim") {
@@ -229,14 +241,50 @@ async function api(op) {
     return localStore.write(JSON.parse(JSON.stringify(s)));
   }
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(op)   // 純字串 body：避免觸發 CORS preflight
-  });
+  /* 一定要有逾時。沒有的話，只要 Google 那邊沒回應，
+     頁面就會無止盡地等下去，使用者只看到轉圈圈。 */
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 20000);
+  let res;
+  try {
+    res = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(op),  // 純字串 body：避免觸發 CORS preflight
+      signal: ctrl.signal
+    });
+  } catch (e) {
+    throw new Error(e && e.name === "AbortError"
+      ? "連線逾時，Google 那邊沒有回應"
+      : "連不上伺服器，請檢查網路");
+  } finally {
+    clearTimeout(timer);
+  }
   if (!res.ok) throw new Error("連線失敗（HTTP " + res.status + "）");
   const data = await res.json();
   if (data.error) throw new Error(data.error);
   return normalize(data);
+}
+
+/* ----------------------------------------------------------
+   內容快取：把最近一次讀到的資料留在這台裝置上。
+   下次開頁先用它畫出正確畫面，等伺服器回來再默默更新，
+   親友就不會看到「先閃一下舊內容」。
+   ---------------------------------------------------------- */
+const CACHE_KEY = "rae-registry-cache-v1";
+
+function cachedState() {
+  if (!API_URL) return null;          // 本機模式本來就直接讀 localStorage
+  const raw = lsGet(CACHE_KEY);
+  if (!raw) return null;
+  try {
+    const s = normalize(JSON.parse(raw));
+    return s.items.length ? s : null;
+  } catch (e) { return null; }
+}
+
+function cacheState(s) {
+  if (!API_URL || !s) return;
+  try { lsSet(CACHE_KEY, JSON.stringify(s)); } catch (e) {}
 }
 
 /** 讀取狀態；第一次使用會自動寫入預設內容 */
