@@ -556,7 +556,6 @@ footer{
     <div class="actions">
       <button class="btn btn-primary" id="btnGoList" type="button">前往清單</button>
       <button class="btn btn-ghost" id="btnGoAdd" type="button">我想送清單以外的</button>
-      <button class="btn btn-blue" id="btnShare" type="button">複製清單連結</button>
     </div>
 
     <div class="banner" id="localBanner" hidden><b>本機預覽模式：</b>認領紀錄目前只存在你這台裝置，其他人看不到。要正式開放給親友，請照「設定說明」把 API_URL 接上 Google 試算表。</div>
@@ -726,16 +725,13 @@ function itemCard(it, mode) {
   if (claims.length) {
     let rows;
     if (isHost) {
-      rows = claims.map(c => claimerRow(c, false));
+      rows = claims.map(c => claimerRow(c, false));      // 後台看得到每一位的名字
     } else {
-      const mine = myClaims();
+      const mine = myClaims();                            // 一般訪客只看得到自己那一筆
       rows = claims.filter(c => mine.includes(c.cid)).map(c => claimerRow(c, false));
-      const others = claims.filter(c => !mine.includes(c.cid)).length;
-      if (others) {
-        rows.push('<div class="claimer"><span class="tick"></span><span class="who">' +
-          (others > 1 ? "已經有 " + others + " 位朋友準備了" : "已經有朋友準備了") + "</span></div>");
-      }
     }
+    rows.push('<div class="claimer"><span class="tick"></span><span class="who">目前已認領 ' +
+      claims.length + " 組</span></div>");
     claimersHtml = '<div class="claimers">' + rows.join("") + "</div>";
   }
 
@@ -794,20 +790,23 @@ function renderMeta() {
 function render() {
   renderMeta();
   const all = visible();
+  const hasClaim = i => (i.claims || []).length > 0;
+  /* 還沒滿的都留在「還可以準備」，消耗品才不會一個人認領就沒人能再送；
+     只要有人認領過就同時列進「已經有人準備」，一眼看得出哪些已經有著落。 */
   const open = all.filter(i => !isFull(i, state));
-  const done = all.filter(i => isFull(i, state));
+  const done = all.filter(hasClaim);
 
   renderList($("#panel-open"), open, "open",
     '<div class="empty"><svg class="art" viewBox="0 0 74 44" aria-hidden="true"><use href="#i-nest"/></svg><strong>清單被大家包辦完了</strong>真的太感謝了，如果還想送點什麼，可以到「新增項目」自己加一項。</div>');
   renderList($("#panel-done"), done, "done",
-    '<div class="empty"><svg class="art" viewBox="0 0 74 44" aria-hidden="true"><use href="#i-nest"/></svg><strong>還沒有人登記</strong>當有人按下「我來準備」，那一項就會搬到這裡。</div>');
+    '<div class="empty"><svg class="art" viewBox="0 0 74 44" aria-hidden="true"><use href="#i-nest"/></svg><strong>還沒有人登記</strong>只要有人按下「我來準備」，那一項就會出現在這裡。</div>');
 
   const guests = all.filter(i => i.by);
   $("#guestList").innerHTML = guests.length
     ? '<section class="cat"><div class="cat-head"><svg class="sprig" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-leaf"/></svg><h2>大家加碼的項目</h2><div class="rule"></div><span class="n">' + guests.length + ' 項</span></div><ul class="list">' + guests.map(i => itemCard(i, isFull(i, state) ? "done" : "open")).join("") + "</ul></section>"
     : "";
 
-  const doneCount = done.length;
+  const doneCount = done.length;   // 有人認領就算一項，不必等到額滿
   $("#pDone").textContent = doneCount;
   $("#pTotal").textContent = all.length;
   const pct = all.length ? (doneCount / all.length * 100) : 0;
@@ -851,20 +850,6 @@ $("#btnGoList").addEventListener("click", () => {
 $("#btnGoAdd").addEventListener("click", () => {
   switchTab("add");
   $("#panel-add").scrollIntoView({ behavior: "smooth", block: "start" });
-});
-
-$("#btnShare").addEventListener("click", async () => {
-  const url = location.href.split("?")[0];
-  try {
-    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      await navigator.share({ title: "Rae 的育兒清單", url });
-    } else {
-      await navigator.clipboard.writeText(url);
-      toast("連結已複製，可以貼到 LINE 了");
-    }
-  } catch (e) {
-    toast("複製失敗，請直接複製網址列");
-  }
 });
 
 document.addEventListener("click", e => {
@@ -1030,7 +1015,7 @@ const SNAPSHOT = {
       "id": "s0",
       "c": "餵食",
       "n": "圍兜 / 口水巾",
-      "note": "",
+      "note": "1-3組",
       "url": "",
       "want": 0,
       "by": "",
@@ -1052,7 +1037,7 @@ const SNAPSHOT = {
       "id": "s2",
       "c": "餵食",
       "n": "Yep2 自動泡奶機",
-      "note": "半夜泡奶救星",
+      "note": "",
       "url": "https://www.yep2story.com/pages/automaticmilkmachine?srsltid=AfmBOop5xAPmUQAlDuhwzrFRpPHPWib_PsdsSONGmGXl07b_zhRLYqe9",
       "want": 1,
       "by": "",
@@ -1063,18 +1048,20 @@ const SNAPSHOT = {
       "id": "s5",
       "c": "尿布與清潔",
       "n": "紙尿布",
-      "note": "新生兒 NB 號",
+      "note": "新生兒 NB 號 (1-3組)",
       "url": "",
       "want": 0,
       "by": "",
       "hidden": false,
-      "claims": []
+      "claims": [
+        {}
+      ]
     },
     {
       "id": "s6",
       "c": "尿布與清潔",
       "n": "純水濕紙巾",
-      "note": "",
+      "note": "1-3組",
       "url": "",
       "want": 0,
       "by": "",
@@ -1107,7 +1094,7 @@ const SNAPSHOT = {
       "id": "s9",
       "c": "尿布與清潔",
       "n": "乳液 / 護臀膏",
-      "note": "",
+      "note": "1-3組",
       "url": "",
       "want": 0,
       "by": "",
@@ -1129,7 +1116,7 @@ const SNAPSHOT = {
       "id": "s11",
       "c": "洗澡與日常照護",
       "n": "沐浴用品",
-      "note": "無香料、低敏配方為佳",
+      "note": "無香料、低敏配方為佳 (1-3組)",
       "url": "",
       "want": 0,
       "by": "",
@@ -1173,7 +1160,7 @@ const SNAPSHOT = {
       "id": "s18",
       "c": "衣物",
       "n": "寶寶內衣（厚）/ 紗布衣",
-      "note": "",
+      "note": "1-3組",
       "url": "",
       "want": 0,
       "by": "",
@@ -1184,7 +1171,7 @@ const SNAPSHOT = {
       "id": "s19",
       "c": "衣物",
       "n": "紗布巾",
-      "note": "",
+      "note": "1-3組",
       "url": "",
       "want": 0,
       "by": "",
