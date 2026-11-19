@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>睿伊 Rae 的專屬小卡</title>
+<meta name="description" content="打開看看睿伊送給你的是哪一款彌月小卡。">
+<meta property="og:title" content="睿伊 Rae 滿月囉！你的專屬小卡是哪一款？💌">
+<meta property="og:description" content="4 款小卡隨機抽，抽到就是你的專屬小卡！">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://justillusion1219.github.io/baby_registry/card/og.jpg">
+<meta name="theme-color" content="#EEF2F6">
+<style>
+:root{
+  --bg:#EEF2F6;
+  --bg-2:#F8F5EF;
+  --ink:#3F4B5C;
+  --muted:#6B7889;
+  --blue:#6E98C4;
+  --blue-deep:#4D78A6;
+  --blush:#E8A9A0;
+  --blush-text:#9A5C53;
+  --cream:#FFFDF9;
+  --shadow:0 2px 6px rgba(50,70,100,.06), 0 24px 50px -24px rgba(50,70,100,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(120% 80% at 50% 0%, var(--bg-2) 0%, var(--bg) 70%);
+  background-color:var(--bg);
+  color:var(--ink);
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  overflow-x:hidden;
+}
+.stage{width:100%;max-width:420px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+
+/* ---------- Envelope ---------- */
+.intro{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.intro h1{font-size:22px;font-weight:600;letter-spacing:.08em;color:var(--blue-deep)}
+.intro p{font-size:14px;color:var(--muted);line-height:1.7;letter-spacing:.04em}
+.intro p strong{color:var(--blush-text);font-weight:600}
+.envelope{
+  position:relative;width:min(78vw,300px);aspect-ratio:3/2;margin:22px 0 10px;
+  cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent;
+  animation:bob 2.6s ease-in-out infinite;
+}
+.envelope:focus-visible{outline:3px solid var(--blue);outline-offset:8px;border-radius:12px}
+.env-back,.env-front,.env-flap{position:absolute;inset:0;border-radius:10px}
+.env-back{background:#DCE6F0;box-shadow:var(--shadow)}
+.env-front{
+  background:
+    linear-gradient(to top right, #E6EEF6 49.6%, transparent 50%) left/50% 100% no-repeat,
+    linear-gradient(to top left, #E6EEF6 49.6%, transparent 50%) right/50% 100% no-repeat;
+  z-index:3;
+}
+.env-flap{
+  z-index:4;transform-origin:top center;
+  background:linear-gradient(to bottom, #CFDCEA, #C4D4E5);
+  clip-path:polygon(0 0,100% 0,50% 58%);
+  transition:transform .55s cubic-bezier(.5,0,.3,1);
+}
+.seal{
+  position:absolute;z-index:5;left:50%;top:50%;width:52px;height:52px;margin:-34px 0 0 -26px;
+  border-radius:50%;background:var(--blush);color:#fff;display:grid;place-items:center;
+  font-size:22px;box-shadow:0 4px 10px -2px rgba(180,100,90,.5);
+  transition:opacity .25s, transform .25s;
+}
+.peek{
+  position:absolute;z-index:2;left:8%;right:8%;top:8%;height:80%;
+  background:var(--cream);border-radius:6px;
+  transition:transform .6s cubic-bezier(.3,1.4,.5,1) .25s;
+}
+.envelope.open{animation:none}
+.envelope.open .env-flap{transform:rotateX(180deg);z-index:1}
+.envelope.open .seal{opacity:0;transform:scale(.6)}
+.envelope.open .peek{transform:translateY(-55%)}
+.tap-hint{font-size:13px;color:var(--blue-deep);letter-spacing:.15em;animation:pulse 1.8s ease-in-out infinite}
+
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* ---------- Result ---------- */
+.result{display:none;flex-direction:column;align-items:center;gap:14px;width:100%}
+.result.show{display:flex}
+.badge{
+  font-size:14px;letter-spacing:.06em;color:var(--blue-deep);text-align:center;
+  background:#fff;border-radius:999px;padding:7px 16px;box-shadow:0 1px 3px rgba(50,70,100,.08);
+}
+.badge b{color:var(--blush-text);font-weight:600}
+.card-wrap{width:100%;perspective:1200px}
+.card{
+  width:100%;aspect-ratio:900/1433;border-radius:14px;overflow:hidden;
+  background:var(--cream);box-shadow:var(--shadow);transform-origin:center;
+}
+.card img{display:block;width:100%;height:100%;object-fit:cover;-webkit-touch-callout:default}
+.card.flip-in{animation:flipIn .7s cubic-bezier(.2,.9,.3,1.15) both}
+@keyframes flipIn{
+  0%{transform:rotateY(90deg) scale(.85);opacity:0}
+  60%{opacity:1}
+  100%{transform:rotateY(0) scale(1)}
+}
+.note{
+  width:100%;text-align:center;font-size:13px;line-height:1.7;color:var(--muted);
+  background:rgba(255,255,255,.7);border-radius:12px;padding:10px 14px;
+}
+.btn{
+  width:100%;min-height:48px;border-radius:999px;border:0;cursor:pointer;
+  font:inherit;font-size:15px;letter-spacing:.06em;
+  background:var(--blue-deep);color:#fff;box-shadow:0 8px 18px -10px rgba(77,120,166,.9);
+  -webkit-tap-highlight-color:transparent;transition:transform .12s;
+}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--blush);outline-offset:3px}
+.tip{font-size:12px;color:var(--muted);text-align:center}
+
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.confetti i{position:absolute;top:-20px;font-style:normal;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+
+footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;text-align:center}
+
+@media (prefers-reduced-motion: reduce){
+  .envelope,.tap-hint{animation:none}
+  .card.flip-in{animation:none}
+  .confetti{display:none}
+}
+</style>
+</head>
+<body>
+<main class="stage">
+
+  <section class="intro" id="intro">
+    <h1>睿伊 Rae 滿月囉！</h1>
+    <p id="introText">睿伊準備了 4 款彌月小卡<br>打開看看哪一張是你的專屬小卡！</p>
+    <button class="envelope" id="envelope" aria-label="打開信封，看看你的專屬小卡">
+      <span class="env-back"></span>
+      <span class="peek"></span>
+      <span class="env-front"></span>
+      <span class="env-flap"></span>
+      <span class="seal" aria-hidden="true">♡</span>
+    </button>
+    <div class="tap-hint" id="tapHint">點一下信封拆開</div>
+  </section>
+
+  <section class="result" id="result" aria-live="polite">
+    <div class="badge" id="badge"></div>
+    <div class="card-wrap">
+      <div class="card" id="card"><img id="cardImg" alt=""></div>
+    </div>
+    <div class="note" id="note"></div>
+    <button class="btn" id="shareBtn">問問朋友抽到哪一款</button>
+    <p class="tip">長按圖片即可儲存你的專屬小卡 ♡</p>
+  </section>
+
+  <footer>Eva &amp; James</footer>
+</main>
+
+<script>
+(function(){
+  var CARDS = [
+    { src:'../card/card1.jpg', name:'小雲朵款', alt:'藍色小雲朵彌月卡：大家好！我是睿伊，我滿月囉！感謝大家的祝福' },
+    { src:'../card/card2.jpg', name:'小鯨魚款', alt:'小鯨魚與氣球彌月卡：我滿月囉！感謝大家的祝福' },
+    { src:'../card/card3.jpg', name:'塗鴉派對款', alt:'塗鴉風 One Month 彌月卡：哈囉，我是睿伊，我滿月啦！' },
+    { src:'../card/card4.jpg', name:'獨角獸款', alt:'粉色獨角獸 Hello 彌月卡：Rae 睿伊滿月了！感謝大家的祝福' }
+  ];
+  var KEY = 'rae-lucky-card';
+  var $ = function(id){ return document.getElementById(id); };
+
+  function getSaved(){
+    try {
+      var v = parseInt(localStorage.getItem(KEY), 10);
+      return (v >= 0 && v < CARDS.length) ? v : -1;
+    } catch(e){ return -1; }
+  }
+
+  // Each visitor draws once; the result is remembered on this device
+  var saved = getSaved();
+  var already = saved > -1;
+  var idx = already ? saved : Math.floor(Math.random() * CARDS.length);
+  if (!already){ try { localStorage.setItem(KEY, String(idx)); } catch(e){} }
+
+  var img = new Image(); img.src = CARDS[idx].src; // preload only this visitor's card
+
+  if (already){
+    $('introText').innerHTML = '你已經抽過囉！<br>點信封再看一次你的專屬小卡 ♡';
+    $('tapHint').textContent = '點一下信封打開';
+  }
+
+  function confetti(){
+    var box = document.createElement('div');
+    box.className = 'confetti';
+    var glyphs = ['♡','✦','✧','☁︎','✿','·'];
+    var colors = ['#6E98C4','#E8A9A0','#F2C879','#9FBCD9','#D6A6C8'];
+    for (var i = 0; i < 36; i++){
+      var el = document.createElement('i');
+      el.textContent = glyphs[i % glyphs.length];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.color = colors[i % colors.length];
+      el.style.fontSize = (12 + Math.random() * 16) + 'px';
+      el.style.animationDuration = (2.2 + Math.random() * 1.8) + 's';
+      el.style.animationDelay = (Math.random() * .6) + 's';
+      box.appendChild(el);
+    }
+    document.body.appendChild(box);
+    setTimeout(function(){ box.remove(); }, 4500);
+  }
+
+  function reveal(){
+    var c = CARDS[idx];
+    $('cardImg').src = c.src;
+    $('cardImg').alt = c.alt;
+    $('badge').innerHTML = '你的專屬小卡是 <b>「' + c.name + '」</b>';
+    $('note').textContent = already
+      ? '這就是屬於你的那一張 ♡'
+      : '4 款裡你抽到了這一張！快問問朋友抽到哪一款～';
+    $('intro').style.display = 'none';
+    $('result').classList.add('show');
+    var card = $('card');
+    card.classList.remove('flip-in'); void card.offsetWidth; card.classList.add('flip-in');
+    if (!already) confetti();
+  }
+
+  $('envelope').addEventListener('click', function(){
+    if (this.classList.contains('open')) return;
+    this.classList.add('open');
+    setTimeout(reveal, 900);
+  });
+
+  $('shareBtn').addEventListener('click', function(){
+    var url = location.href.split('#')[0].split('?')[0];
+    var text = '睿伊 Rae 滿月囉！我的專屬小卡是「' + CARDS[idx].name + '」，你會抽到哪一款？💌';
+    if (navigator.share){
+      navigator.share({ title:'睿伊 Rae 的專屬小卡', text:text, url:url }).catch(function(){});
+    } else if (navigator.clipboard){
+      navigator.clipboard.writeText(text + '\n' + url).then(function(){
+        var b = $('shareBtn'); b.textContent = '已複製連結 ✓';
+        setTimeout(function(){ b.textContent = '問問朋友抽到哪一款'; }, 2000);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>
