@@ -152,7 +152,6 @@ footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;te
       <div class="card" id="card"><img id="cardImg" alt=""></div>
     </div>
     <div class="note" id="note"></div>
-    <button class="btn" id="shareBtn">問問朋友抽到哪一款</button>
     <p class="tip">長按圖片即可儲存你的專屬小卡 ♡</p>
   </section>
 
@@ -230,18 +229,6 @@ footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;te
     setTimeout(reveal, 900);
   });
 
-  $('shareBtn').addEventListener('click', function(){
-    var url = location.href.split('#')[0].split('?')[0];
-    var text = '睿伊 Rae 滿月囉！我的專屬小卡是「' + CARDS[idx].name + '」，你會抽到哪一款？💌';
-    if (navigator.share){
-      navigator.share({ title:'睿伊 Rae 的專屬小卡', text:text, url:url }).catch(function(){});
-    } else if (navigator.clipboard){
-      navigator.clipboard.writeText(text + '\n' + url).then(function(){
-        var b = $('shareBtn'); b.textContent = '已複製連結 ✓';
-        setTimeout(function(){ b.textContent = '問問朋友抽到哪一款'; }, 2000);
-      });
-    }
-  });
 })();
 </script>
 </body>
