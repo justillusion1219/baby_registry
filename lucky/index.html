@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>睿伊 Rae 的命定小卡</title>
-<meta name="description" content="每個人只能抽一次！打開看看睿伊送給你的是哪一款彌月小卡。">
-<meta property="og:title" content="睿伊 Rae 滿月囉！你的命定小卡是哪一款？💌">
-<meta property="og:description" content="4 款小卡，每人只能抽一次～抽到就是你的專屬小卡！">
+<title>睿伊 Rae 的專屬小卡</title>
+<meta name="description" content="打開看看睿伊送給你的是哪一款彌月小卡。">
+<meta property="og:title" content="睿伊 Rae 滿月囉！你的專屬小卡是哪一款？💌">
+<meta property="og:description" content="4 款小卡隨機抽，抽到就是你的專屬小卡！">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://justillusion1219.github.io/baby_registry/card/og.jpg">
 <meta name="theme-color" content="#EEF2F6">
@@ -135,8 +135,8 @@ footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;te
 
   <section class="intro" id="intro">
     <h1>睿伊 Rae 滿月囉！</h1>
-    <p id="introText">睿伊準備了 4 款彌月小卡<br><strong>每個人只能抽一次</strong>，抽到就是你的命定小卡！</p>
-    <button class="envelope" id="envelope" aria-label="打開信封，看看你的命定小卡">
+    <p id="introText">睿伊準備了 4 款彌月小卡<br>打開看看哪一張是你的專屬小卡！</p>
+    <button class="envelope" id="envelope" aria-label="打開信封，看看你的專屬小卡">
       <span class="env-back"></span>
       <span class="peek"></span>
       <span class="env-front"></span>
@@ -156,7 +156,7 @@ footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;te
     <p class="tip">長按圖片即可儲存你的專屬小卡 ♡</p>
   </section>
 
-  <footer>Daddy 佳豪 × Mommy 玉瑄 · 2026.10.27</footer>
+  <footer>Eva &amp; James</footer>
 </main>
 
 <script>
@@ -186,7 +186,7 @@ footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;te
   var img = new Image(); img.src = CARDS[idx].src; // preload only this visitor's card
 
   if (already){
-    $('introText').innerHTML = '你已經抽過囉！<br>點信封再看一次你的命定小卡 ♡';
+    $('introText').innerHTML = '你已經抽過囉！<br>點信封再看一次你的專屬小卡 ♡';
     $('tapHint').textContent = '點一下信封打開';
   }
 
@@ -213,10 +213,10 @@ footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;te
     var c = CARDS[idx];
     $('cardImg').src = c.src;
     $('cardImg').alt = c.alt;
-    $('badge').innerHTML = '你的命定小卡是 <b>「' + c.name + '」</b>';
+    $('badge').innerHTML = '你的專屬小卡是 <b>「' + c.name + '」</b>';
     $('note').textContent = already
-      ? '每人只有一次機會，這就是屬於你的那一張 ♡'
-      : '4 款裡你抽到了這一張！每人只能抽一次，快問問朋友抽到哪一款～';
+      ? '這就是屬於你的那一張 ♡'
+      : '4 款裡你抽到了這一張！快問問朋友抽到哪一款～';
     $('intro').style.display = 'none';
     $('result').classList.add('show');
     var card = $('card');
@@ -232,9 +232,9 @@ footer{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-top:18px;te
 
   $('shareBtn').addEventListener('click', function(){
     var url = location.href.split('#')[0].split('?')[0];
-    var text = '睿伊 Rae 滿月囉！我的命定小卡是「' + CARDS[idx].name + '」，每人只能抽一次，你會抽到哪一款？💌';
+    var text = '睿伊 Rae 滿月囉！我的專屬小卡是「' + CARDS[idx].name + '」，你會抽到哪一款？💌';
     if (navigator.share){
-      navigator.share({ title:'睿伊 Rae 的命定小卡', text:text, url:url }).catch(function(){});
+      navigator.share({ title:'睿伊 Rae 的專屬小卡', text:text, url:url }).catch(function(){});
     } else if (navigator.clipboard){
       navigator.clipboard.writeText(text + '\n' + url).then(function(){
         var b = $('shareBtn'); b.textContent = '已複製連結 ✓';
